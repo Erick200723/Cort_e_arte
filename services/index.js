@@ -1,1 +1,12 @@
-/* quando a navbar-toggler-icon os intes devem aparecer ao cliclar nele */
+
+function direct(){
+    window.location.href = "podutos.html";
+}
+
+function scrollToTop(event) {
+    event.preventDefault();
+    const target = document.querySelector('#topo');
+    if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+    }
+}a

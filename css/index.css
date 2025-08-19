@@ -1,3 +1,5 @@
+/*transição suave entre paginas*/
+
 /* Estilo geral da Navbar */
 .navbar {
     background-color: white !important;
@@ -142,6 +144,9 @@ html {
     background-size: 200% 200%;
     animation: gradientBG 10s ease infinite;
 }
+#icon{
+   width: 80px;
+}
 
 .cards2 {
     padding: 4rem 2rem;
@@ -213,13 +218,13 @@ html {
 .card i {
     font-size: 3rem;
     margin-bottom: 1.5rem;
-    color: #9b59b6;
+    color: #000000;
     transition: all 0.3s ease;
 }
 
-.card:hover i {
+.card:hover i  {
     transform: scale(1.1);
-    color: #c62bc9;
+    color: #000000;
 }
 
 .card-body {

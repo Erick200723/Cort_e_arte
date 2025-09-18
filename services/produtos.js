@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     filterInput.addEventListener('input', function() {
         const filterText = this.value.toLowerCase().trim();
         
+        // Filtra os produtos
         productCards.forEach(card => {
             const title = card.querySelector('.product-title').textContent.toLowerCase();
             const description = card.querySelector('.product-description').textContent.toLowerCase();

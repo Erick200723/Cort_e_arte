@@ -338,6 +338,207 @@
     color: #bdc3c7;
 }
 
+/* Estilos do Modal */
+.modal-content {
+  border-radius: 20px;
+  padding: 25px 30px;
+  max-width: 850px;
+  margin: auto;
+  background: #fff;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  animation: modalFadeIn 0.4s ease;
+  border: none;
+}
+
+/* Header */
+.modal-header {
+  border-bottom: none;
+  position: relative;
+  justify-content: center;
+  padding-bottom: 15px;
+}
+
+.modal-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #c62bc9;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.modal-header .btn-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: #666;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+
+.modal-header .btn-close:hover {
+  opacity: 1;
+  transform: rotate(90deg);
+}
+
+/* Body */
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+  padding-top: 10px;
+}
+
+#mainImage {
+  width: 250px;
+  height: 250px;
+  object-fit: contain;
+  border-radius: 15px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
+}
+
+#mainImage:hover {
+  transform: scale(1.05);
+}
+
+/* Thumbnails */
+#thumbnailContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.thumbnail {
+  width: 90px;
+  height: 90px;
+  border-radius: 10px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.thumbnail:hover {
+  border-color: #c62bc9;
+  transform: scale(1.1);
+}
+
+/* Animação de entrada */
+@keyframes modalFadeIn {
+  from { transform: translateY(-30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Botão do WhatsApp no modal */
+.btn-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  background: linear-gradient(135deg, #25d366, #1ebe5b);
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+
+  padding: 14px 28px;
+  border: none;
+  border-radius: 50px;
+
+  box-shadow: 0 6px 15px rgba(37, 211, 102, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-whatsapp:hover {
+  background: linear-gradient(135deg, #20b954, #199e46);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 20px rgba(37, 211, 102, 0.6);
+  color: white;
+}
+
+.btn-whatsapp:active {
+  transform: scale(0.97);
+}
+
+/* Caixa de compra (quantidade + preço) */
+.purchase-box {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  max-width: 350px;
+  margin: 0 auto;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.purchase-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.quantity-input {
+  width: 120px;
+  border: 2px solid #c62bc9;
+  border-radius: 50px;
+  text-align: center;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.quantity-input:focus {
+  outline: none;
+  border-color: #a521a8;
+  box-shadow: 0 0 8px rgba(198, 43, 201, 0.4);
+}
+
+.price-info {
+  margin-top: 10px;
+  color: #444;
+  font-size: 1rem;
+}
+
+.price-info .highlight {
+  color: #c62bc9;
+  font-weight: 700;
+}
+
+.price-info strong {
+  color: #c62bc9;
+  font-size: 1.2rem;
+}
+
+
+/* Imagem principal no modal */
+#mainImage {
+  width: 200px;       /* largura fixa */
+  height: 200px;      /* altura fixa */
+  object-fit: contain; /* mantém proporção sem cortar */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Thumbnails */
+.thumbnail {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;   /* preenche sem distorcer muito */
+  border-radius: 8px;
+  margin: 5px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.thumbnail:hover {
+  transform: scale(1.1);
+  border: 2px solid #007bff;
+}
+
 /* Layout responsivo */
 @media (max-width: 991.98px) {
     .navbar-collapse {
@@ -379,5 +580,139 @@
     .footer-title::after {
         left: 50%;
         transform: translateX(-50%);
+    }
+}
+
+
+/* Responsividade */
+@media (max-width: 991.98px) {
+    .modal-dialog {
+        max-width: 90%; /* ocupa quase toda a tela em tablets */
+    }
+
+    #mainImage {
+        width: 150px;
+        height: 150px;
+    }
+
+    .thumbnail {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 768px) {
+    .modal-dialog {
+        max-width: 95%;
+        margin: 1rem auto;
+    }
+
+    #mainImage {
+        width: 120px;
+        height: 120px;
+    }
+
+    .thumbnail {
+        width: 50px;
+        height: 50px;
+    }
+
+    .purchase-box {
+        padding: 15px;
+    }
+
+    .quantity-input {
+        width: 50%;
+    }
+
+    #btnSolicitar {
+        font-size: 0.9rem;
+        padding: 10px 15px;
+    }
+}
+
+/* Modal base */
+.modal-dialog {
+    max-width: 700px;
+    margin: 2rem auto;
+}
+
+.modal-content {
+    padding: 20px;
+    border-radius: 15px;
+}
+
+#mainImage {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+.thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin: 5px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.thumbnail:hover {
+    transform: scale(1.1);
+    border: 2px solid #007bff;
+}
+
+.purchase-box {
+    padding: 20px;
+    text-align: center;
+}
+
+.quantity-input {
+    width: 60%;
+    margin: 0 auto 10px;
+}
+
+.btn-whatsapp {
+    background-color: #25D366;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+@media (max-width: 400px) {
+    /* diminuir o modal em telas muito pequenas */
+    #productModal{
+        padding: 20px;   
+    }
+    .modal-dialog {
+        max-width: 95%;
+        margin: 1rem auto;
+    }
+    #mainImage {
+        width: 120px;
+        height: 120px;
+    }
+
+    .thumbnail {
+        width: 50px;
+        height: 50px;
+    }
+
+    .purchase-box {
+        padding: 10px;
+    }
+
+    .quantity-input {
+        width: 70%;
+    }
+
+    .btn-whatsapp {
+        font-size: 0.9rem;
+        padding: 10px 15px;
     }
 }

@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
       // Resetar quantidade, pagamento e preços
-      quantityInput.value = 1;
+      quantityInput.value = 0;
       paymentMethod.value = "pix";
       updateTotal();
 
@@ -101,8 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ================= FUNÇÃO PARA ATUALIZAR TOTAL =================
   function updateTotal() {
-    let quantity = parseInt(quantityInput.value) || 1;
-    if (quantity < 1) quantity = 1;
+    let quantity = parseInt(quantityInput.value);
+    if (quantity < 0) quantity = 1;
+    if(quantity === null || isNaN(quantity)) quantity = 0;
     if (quantity > 10) quantity = 10;
     quantityInput.value = quantity;
 

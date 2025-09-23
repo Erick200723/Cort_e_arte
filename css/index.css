@@ -408,6 +408,10 @@ html {
   color: #c62bc9;
 }
 
+#a:hover {
+  color: #c62bc9;
+}
+
 .footer-list i, .social-icons i {
   font-size: 1.1rem;
   color: #c62bc9;

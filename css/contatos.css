@@ -22,6 +22,7 @@
 
 .navbar-nav {
     display: flex;
+    gap: 1rem;
     justify-content: center;
     margin-right: 20%;
     width: 100%;
@@ -272,6 +273,10 @@
 }
 
 .footer-list a:hover {
+  color: #c62bc9;
+}
+
+#a:hover {
   color: #c62bc9;
 }
 

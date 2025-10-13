@@ -88,6 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const modalTitle = document.getElementById('productModalLabel');
       modalTitle.innerText = currentProduct.title;
 
+      //manter as imagens do modal responsivas
+      mainImage.style.maxWidth = '100%';
+      mainImage.style.height = 'auto';
+
 
       // Resetar quantidade, pagamento e preços
       quantityInput.value = 0;

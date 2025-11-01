@@ -1,5 +1,5 @@
 // services/produtos.js
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://sitemcor-arte.onrender.com/api';
 
 // ================= VARIÁVEIS GLOBAIS =================
 let allProducts = []; // Armazena todos os produtos da API
@@ -46,8 +46,8 @@ function syncPricesWithAPI() {
       // Encontra produto correspondente na API
       const apiProduct = allProducts.find(p => 
         productName.toLowerCase().includes(p.name.toLowerCase()) ||
-        p.name.toLowerCase().includes(productName.toLowerCase()) ||
-        findSimilarProduct(productName, p.name)
+        p.name.toLowerCase().includes(productName.toLowerCase())
+        // findSimilarProduct(productName, p.name)
       );
       
       if (apiProduct) {

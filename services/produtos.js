@@ -5,7 +5,7 @@ const API_URL = 'http://localhost:3000/api';
 let allProducts = []; // Armazena todos os produtos da API
 let currentProduct = { title: '', price: 0 };
 
-// ================= CONEXÃO COM API (SEM ALTERAR LÓGICA EXISTENTE) =================
+// ================= CONEXÃO COM API =================
 async function initializeAPI() {
   try {
     console.log('🚀 Iniciando conexão com API...');
@@ -19,18 +19,20 @@ async function initializeAPI() {
     allProducts = await response.json();
     console.log('✅ Produtos carregados da API:', allProducts.length, 'produtos');
     
-    // Atualiza os preços dinamicamente mantendo toda a lógica existente
+    // ✅ AGORA ESTÁ EXECUTANDO - Atualiza os preços
     syncPricesWithAPI();
     
   } catch (error) {
     console.log('ℹ️ API não disponível, usando dados locais:', error.message);
-    // Não quebra o site, continua com dados locais
   }
 }
 
-// ================= SINCRONIZA PREÇOS COM API (MANTÉM LÓGICA EXISTENTE) =================
+// ================= SINCRONIZA PREÇOS COM API =================
 function syncPricesWithAPI() {
   const productCards = document.querySelectorAll('.product-card');
+  
+  console.log('🔄 Sincronizando preços com API...');
+  console.log('📦 Produtos da API:', allProducts);
   
   productCards.forEach(card => {
     const titleElement = card.querySelector('.product-title');
@@ -39,7 +41,9 @@ function syncPricesWithAPI() {
     if (titleElement && priceElement) {
       const productName = titleElement.textContent.trim();
       
-      // Encontra produto correspondente na API (busca inteligente)
+      console.log(`🔍 Procurando correspondência para: "${productName}"`);
+      
+      // Encontra produto correspondente na API
       const apiProduct = allProducts.find(p => 
         productName.toLowerCase().includes(p.name.toLowerCase()) ||
         p.name.toLowerCase().includes(productName.toLowerCase()) ||
@@ -51,15 +55,20 @@ function syncPricesWithAPI() {
         const originalPrice = priceElement.textContent;
         priceElement.textContent = `R$ ${apiProduct.price.toFixed(2).replace('.', ',')}`;
         
+        console.log(`💰 Preço atualizado: ${productName}`);
+        console.log(`   Antigo: ${originalPrice} → Novo: ${priceElement.textContent}`);
+        
         // Atualiza data-images se existir na API
         if (apiProduct.images && apiProduct.images.length > 0) {
           card.setAttribute('data-images', JSON.stringify(apiProduct.images));
         }
-        
-        console.log(`💰 Preço atualizado: ${productName} - ${originalPrice} → ${priceElement.textContent}`);
+      } else {
+        console.log(`❌ Nenhum correspondente na API para: "${productName}"`);
       }
     }
   });
+  
+  console.log('✅ Sincronização de preços concluída');
 }
 
 // Função auxiliar para encontrar produtos similares
@@ -67,12 +76,18 @@ function findSimilarProduct(frontendName, apiName) {
   const frontendWords = frontendName.toLowerCase().split(' ');
   const apiWords = apiName.toLowerCase().split(' ');
   
-  return frontendWords.some(word => 
+  const match = frontendWords.some(word => 
     word.length > 3 && apiWords.includes(word)
   );
+  
+  if (match) {
+    console.log(`🎯 Produto similar encontrado: "${frontendName}" ↔ "${apiName}"`);
+  }
+  
+  return match;
 }
 
-// ================= LÓGICA ORIGINAL DO FRONTEND (MANTIDA INTACTA) =================
+// ================= LÓGICA ORIGINAL DO FRONTEND =================
 
 // ================= FILTRO DE PRODUTOS =================
 document.addEventListener('DOMContentLoaded', function() {
@@ -126,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const paymentMethod = document.getElementById('paymentMethod');
   const btnSolicitar = document.getElementById('btnSolicitar');
 
-  // Abrir modal ao clicar no card (LÓGICA ORIGINAL)
+  // Abrir modal ao clicar no card
   productCards.forEach(card => {
     card.addEventListener('click', () => {
       let images = [];
@@ -153,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         thumbnailContainer.appendChild(thumb);
       });
 
-      // Guardar dados do produto (LÓGICA ORIGINAL)
+      // Guardar dados do produto
       currentProduct.title = card.querySelector('.product-title').innerText;
       currentProduct.price = parseFloat(
         card.querySelector('.product-price').innerText.replace('R$ ', '').replace(',', '.')
@@ -167,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
       mainImage.style.height = 'auto';
 
       // Resetar quantidade, pagamento e preços
-      quantityInput.value = 1; // Mudei para 1 em vez de 0
+      quantityInput.value = 1;
       paymentMethod.value = "pix";
       updateTotal();
 
@@ -188,8 +203,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Ajuste por pagamento
     const method = paymentMethod.value;
-    if (method === "card2") total += 10 * 2; // 2 parcelas
-    if (method === "card3") total += 10 * 3; // 3 parcelas
+    if (method === "card2") total += 10 * 2;
+    if (method === "card3") total += 10 * 3;
 
     unitPriceEl.textContent = `R$ ${currentProduct.price.toFixed(2).replace('.', ',')}`;
     totalPriceEl.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
@@ -199,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
   quantityInput.addEventListener('input', updateTotal);
   paymentMethod.addEventListener('change', updateTotal);
 
-  // ================= SOLICITAR VIA WHATSAPP (LÓGICA ORIGINAL) =================
+  // ================= SOLICITAR VIA WHATSAPP =================
   btnSolicitar.addEventListener('click', () => {
     const quantity = parseInt(quantityInput.value) || 1;
     let total = currentProduct.price * quantity;
@@ -222,12 +237,12 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', function() {
   console.log('🎨 Frontend Cor e Arte carregado!');
   
-  // Inicializa a API em segundo plano (não bloqueia o carregamento)
+  // Inicializa a API em segundo plano
   setTimeout(() => {
     initializeAPI();
   }, 1000);
   
-  // Sua lógica original de transição continua funcionando
+  // Transição entre páginas
   const body = document.querySelector('body');
   if (body) {
     body.classList.remove('fade-out');

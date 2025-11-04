@@ -368,61 +368,32 @@
     </div>
 
     </section>
-    <!-- ======================= MODAL ======================= -->
-   <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        
-        <!-- Header -->
-        <div class="modal-header">
-          <h5 class="modal-title" id="productModalLabel">Galeria do Produto</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-
-        <!-- Body -->
-        <div class="modal-body text-center">
-
-          <!-- Imagem principal -->
-          <img id="mainImage" src="" alt="Imagem do Produto" class="img-fluid rounded shadow mb-3">
-
-          <!-- Thumbnails -->
-          <div class="d-flex justify-content-center gap-2 flex-wrap" id="thumbnailContainer"></div>
-
-          <!-- Caixa de quantidade, preço e pagamento -->
-          <div class="purchase-box mt-4 p-4 rounded shadow-sm text-center">
-            <!-- Quantidade -->
-            <label for="quantityInput" class="form-label fw-bold">Quantidade</label>
-            <input 
-              type="number" 
-              id="quantityInput" 
-              class="form-control quantity-input mx-auto mb-3" 
-              min="1"max="10" value="0" >
-
-            <!-- Forma de pagamento -->
-            <label for="paymentMethod" class="form-label fw-bold">Forma de Pagamento</label>
-            <select id="paymentMethod" class="form-select w-50 mx-auto mb-3">
-              <option value="pix" selected>Pix - à vista</option>
-              <option value="card1">Cartão - 1x (+R$0)</option>
-              <option value="card2">Cartão - 2x (+R$10 por parcela)</option>
-              <option value="card3">Cartão - 3x (+R$10 por parcela)</option>
-            </select>
-
-            <!-- Preços -->
-            <div class="price-info">
-              <p class="mb-1">Preço unitário: <span id="unitPrice" class="highlight">R$ 0,00</span></p>
-              <p class="fw-bold fs-5">Total: <span id="totalPrice" class="highlight">R$ 0,00</span></p>
+        <!-- Modal Produto -->
+      <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content p-3">
+            <img id="modalProductImage" src="" alt="Produto" class="w-100 mb-3 rounded">
+            <h5 id="modalProductName"></h5>
+            <p id="modalProductDescription" class="text-muted"></p>
+            <p><strong>Preço unitário:</strong> <span id="unitPrice">R$ 0,00</span></p>
+            <div class="mb-2">
+              <label>Quantidade:</label>
+              <input type="number" id="quantityInput" value="1" min="1" class="form-control w-50 d-inline">
             </div>
+            <div class="mb-2">
+              <label>Método de Pagamento:</label>
+              <select id="paymentMethod" class="form-select w-75">
+                <option value="pix">PIX / Dinheiro</option>
+                <option value="card2">Cartão (2x)</option>
+                <option value="card3">Cartão (3x)</option>
+              </select>
+            </div>
+            <h5>Total: <span id="totalPrice">R$ 0,00</span></h5>
+            <button id="btnSolicitar" class="btn btn-success w-100 mt-3">📲 Solicitar Orçamento</button>
           </div>
-
-          <!-- Botão WhatsApp -->
-          <button id="btnSolicitar" class="btn-whatsapp mt-3">
-            <i class="bi bi-whatsapp"></i> Solicitar pelo WhatsApp
-          </button>
-
         </div>
       </div>
-    </div>
-  </div>
+
 
     
     <footer class="footer">

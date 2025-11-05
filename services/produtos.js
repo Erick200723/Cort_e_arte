@@ -96,7 +96,7 @@ function renderProductsFromAPI(products) {
     card.dataset.category = p.category || '';
     card.innerHTML = `
       <div class="product-image">
-        <img src="${p.img || './imgs/default.jpg'}" alt="${p.name}">
+        <img src="${API_URL}${p.img}" alt="${p.name}">
       </div>
       <div class="product-content">
         <h3 class="product-title">${p.name}</h3>

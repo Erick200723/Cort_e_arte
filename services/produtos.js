@@ -19,6 +19,7 @@ async function initializeAPI() {
     if (!response.ok) throw new Error(`Erro ${response.status}: ${response.statusText}`);
 
     allProducts = await response.json();
+    renderProductsFromAPI(allProducts);
     console.log('✅ Produtos carregados:', allProducts.length, 'itens');
 
     syncPricesWithAPI();
@@ -79,6 +80,38 @@ function syncPricesWithAPI() {
 
   console.log('🔄 Sincronização concluída!');
 }
+
+function renderProductsFromAPI(products) {
+  const grid = document.getElementById('productsGrid');
+  if (!grid) return;
+
+  // Limpa duplicados se já existirem
+  const apiCards = grid.querySelectorAll('.api-product-card');
+  apiCards.forEach(c => c.remove());
+
+  products.forEach(p => {
+    // Cria elemento do card
+    const card = document.createElement('div');
+    card.className = 'product-card api-product-card';
+    card.dataset.category = p.category || '';
+    card.innerHTML = `
+      <div class="product-image">
+        <img src="${p.img || './imgs/default.jpg'}" alt="${p.name}">
+      </div>
+      <div class="product-content">
+        <h3 class="product-title">${p.name}</h3>
+        <p class="product-description">${p.description || ''}</p>
+        <div class="product-price">R$ ${parseFloat(p.price).toFixed(2).replace('.', ',')}</div>
+        <button class="btn-product" onclick="solicitarProduto()">Solicitar Orçamento</button>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  console.log(`🧩 ${products.length} produtos renderizados da API!`);
+}
+
 
 // ================= MODAL =================
 function openProductModal(card) {

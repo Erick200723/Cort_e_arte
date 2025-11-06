@@ -1,5 +1,5 @@
-const API_URL = 'https://sitemcor-arte.onrender.com/api';
-// const API_URL = 'http://localhost:3000/api';
+// const API_URL = 'https://sitemcor-arte.onrender.com/api';
+const API_URL = 'http://localhost:3000/api';
 
 // ================= VARIÁVEIS GLOBAIS =================
 let allProducts = []; // Produtos vindos da API
@@ -63,8 +63,9 @@ function syncPricesWithAPI() {
       }
 
       if (imgEl && apiProduct.img) {
-        imgEl.src = apiProduct.img;
+        imgEl.src = `${API_URL.replace('/api', '')}/uploads/${apiProduct.img}`;
       }
+
 
       // 🔗 Guardar info no dataset do card
       card.dataset.apiId = apiProduct.id;
@@ -94,9 +95,13 @@ function renderProductsFromAPI(products) {
     const card = document.createElement('div');
     card.className = 'product-card api-product-card';
     card.dataset.category = p.category || '';
+    const imageUrl = p.img
+  ? `${API_URL.replace('/api', '')}/uploads/${p.img}`
+  : './imgs/default.png';
+
     card.innerHTML = `
       <div class="product-image">
-        <img src="${API_URL}${p.img}" alt="${p.name}">
+        <img src="${imageUrl}" alt="${p.name}">
       </div>
       <div class="product-content">
         <h3 class="product-title">${p.name}</h3>

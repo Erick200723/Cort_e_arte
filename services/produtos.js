@@ -139,7 +139,17 @@ function openProductModal(card) {
   if (modalTitle) modalTitle.textContent = title;
   if (modalPrice) modalPrice.textContent = `R$ ${price.toFixed(2).replace('.', ',')}`;
   if (modalDesc) modalDesc.textContent = desc;
-  if (modalImg && img) modalImg.src = img;
+  if (modalImg) {
+  if (img.startsWith('http')) {
+    modalImg.src = img; // já é URL completa
+  } else if (img.startsWith('/uploads')) {
+    modalImg.src = `${API_URL.replace('/api', '')}${img}`; // backend serve imagem
+  } else if (img) {
+    modalImg.src = `${API_URL.replace('/api', '')}/uploads/${img}`; // só nome do arquivo
+  } else {
+    modalImg.src = './imgs/default.png'; // fallback
+  }
+}
 
   // Salva o produto atual
   currentProduct = { title, price, img };

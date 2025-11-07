@@ -82,6 +82,20 @@ function syncPricesWithAPI() {
   console.log('🔄 Sincronização concluída!');
 }
 
+// 🔹 Evento do filtro (busca)
+filterInput.addEventListener("input", (e) => {
+  const query = e.target.value.toLowerCase().trim();
+
+  const filtered = allProducts.filter((p) =>
+    p.name.toLowerCase().includes(query) ||
+    p.description.toLowerCase().includes(query) ||
+    p.category?.toLowerCase().includes(query)
+  );
+
+  renderProducts(filtered);
+});
+
+
 function renderProductsFromAPI(products) {
   const grid = document.getElementById('productsGrid');
   if (!grid) return;
@@ -96,9 +110,11 @@ function renderProductsFromAPI(products) {
     card.className = 'product-card api-product-card';
     card.dataset.category = p.category || '';
     const imageUrl = p.img
-    ? `${API_URL.replace('/api', '')}/uploads/${p.img}?v=${Date.now()}`
-    : `${API_URL.replace('/api', '')}/uploads/default.png`;
-    
+      ? (p.img.startsWith('/uploads')
+      ? `${API_URL.replace('/api', '')}${p.img}?v=${Date.now()}`
+      : `${API_URL.replace('/api', '')}/uploads/${p.img}?v=${Date.now()}`)
+      : `${API_URL.replace('/api', '')}/uploads/default.png`;
+
     card.innerHTML = `
       <div class="product-image">
         <img src="${imageUrl}" alt="${p.name}">
@@ -141,15 +157,16 @@ function openProductModal(card) {
   if (modalDesc) modalDesc.textContent = desc;
   if (modalImg) {
   if (img.startsWith('http')) {
-    modalImg.src = img; // já é URL completa
+    modalImg.src = img;
   } else if (img.startsWith('/uploads')) {
-    modalImg.src = `${API_URL.replace('/api', '')}${img}`; // backend serve imagem
+    modalImg.src = `${API_URL.replace('/api', '')}${img}`;
   } else if (img) {
-    modalImg.src = `${API_URL.replace('/api', '')}/uploads/${img}`; // só nome do arquivo
+    modalImg.src = `${API_URL.replace('/api', '')}/uploads/${img}`;
   } else {
-    modalImg.src = './imgs/default.png'; // fallback
+    modalImg.src = './imgs/default.png';
   }
 }
+
 
   // Salva o produto atual
   currentProduct = { title, price, img };

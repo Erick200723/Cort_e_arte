@@ -96,9 +96,9 @@ function renderProductsFromAPI(products) {
     card.className = 'product-card api-product-card';
     card.dataset.category = p.category || '';
     const imageUrl = p.img
-    ? `${API_URL.replace('/api', '')}/uploads/${p.img}`
+    ? `${API_URL.replace('/api', '')}/uploads/${p.img}?v=${Date.now()}`
     : `${API_URL.replace('/api', '')}/uploads/default.png`;
-
+    
     card.innerHTML = `
       <div class="product-image">
         <img src="${imageUrl}" alt="${p.name}">

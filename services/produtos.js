@@ -82,19 +82,22 @@ function syncPricesWithAPI() {
   console.log('🔄 Sincronização concluída!');
 }
 
-// 🔹 Evento do filtro (busca)
-filterInput.addEventListener("input", (e) => {
-  const query = e.target.value.toLowerCase().trim();
+// filtro dos produtos por nome
+function filterProductsByName(name) {
+  const filter = name.toLowerCase();
+  const grid = document.getElementById('productsGrid');
+  if (!grid) return;
+  const cards = grid.getElementsByClassName('product-card');
 
-  const filtered = allProducts.filter((p) =>
-    p.name.toLowerCase().includes(query) ||
-    p.description.toLowerCase().includes(query) ||
-    p.category?.toLowerCase().includes(query)
-  );
-
-  renderProducts(filtered);
-});
-
+  Array.from(cards).forEach(card => {
+    const title = card.querySelector('.product-title').textContent.toLowerCase();
+    if (title.includes(filter)) {
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
 
 function renderProductsFromAPI(products) {
   const grid = document.getElementById('productsGrid');

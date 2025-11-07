@@ -155,6 +155,9 @@ function renderProductsFromAPI(products) {
 
     grid.appendChild(card);
   });
+  document.querySelectorAll('.api-product-card').forEach(card => {
+    
+  });
 
   console.log(`🧩 ${products.length} produtos renderizados da API!`);
 }

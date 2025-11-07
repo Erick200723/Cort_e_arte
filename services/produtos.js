@@ -10,6 +10,15 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeAPI();
 });
 
+// Small debounce helper
+function debounce(fn, wait = 250) {
+  let t;
+  return (...args) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...args), wait);
+  };
+}
+
 // ================= CONEXÃO COM API =================
 async function initializeAPI() {
   try {
@@ -18,7 +27,10 @@ async function initializeAPI() {
     const response = await fetch(`${API_URL}/products`);
     if (!response.ok) throw new Error(`Erro ${response.status}: ${response.statusText}`);
 
-    allProducts = await response.json();
+    // backend às vezes retorna array ou { products: [...] }
+    const json = await response.json();
+    allProducts = Array.isArray(json) ? json : (json.products || []);
+
     renderProductsFromAPI(allProducts);
     console.log('✅ Produtos carregados:', allProducts.length, 'itens');
 
@@ -27,6 +39,34 @@ async function initializeAPI() {
     console.warn('⚠️ Erro ao buscar produtos:', error.message);
   }
 }
+
+// ================= FILTRO =================
+// filtra a lista allProducts e re-renderiza
+function filterProductsByName(query) {
+  const q = String(query || '').toLowerCase().trim();
+  if (!q) {
+    renderProductsFromAPI(allProducts);
+    return;
+  }
+
+  const filtered = allProducts.filter(p => {
+    const name = (p.name || '').toLowerCase();
+    const desc = (p.description || '').toLowerCase();
+    const cat = (p.category || '').toLowerCase();
+    return name.includes(q) || desc.includes(q) || cat.includes(q);
+  });
+
+  renderProductsFromAPI(filtered);
+}
+
+// ligar o input do filtro (debounced)
+const filterEl = document.getElementById('filterInput');
+if (filterEl) {
+  filterEl.addEventListener('input', debounce((e) => {
+    filterProductsByName(e.target.value);
+  }, 200));
+}
+
 
 // ================= SINCRONIZAÇÃO DE PREÇOS =================
 function syncPricesWithAPI() {
@@ -80,23 +120,6 @@ function syncPricesWithAPI() {
   });
 
   console.log('🔄 Sincronização concluída!');
-}
-
-// filtro dos produtos por nome
-function filterProductsByName(name) {
-  const filter = name.toLowerCase();
-  const grid = document.getElementById('productsGrid');
-  if (!grid) return;
-  const cards = grid.getElementsByClassName('product-card');
-
-  Array.from(cards).forEach(card => {
-    const title = card.querySelector('.product-title').textContent.toLowerCase();
-    if (title.includes(filter)) {
-      card.style.display = '';
-    } else {
-      card.style.display = 'none';
-    }
-  });
 }
 
 function renderProductsFromAPI(products) {

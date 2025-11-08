@@ -126,19 +126,22 @@ function renderProductsFromAPI(products) {
   const grid = document.getElementById('productsGrid');
   if (!grid) return;
 
-  // Limpa duplicados se já existirem
-  const apiCards = grid.querySelectorAll('.api-product-card');
-  apiCards.forEach(c => c.remove());
+  // Limpa cards anteriores
+  grid.innerHTML = '';
 
   products.forEach(p => {
-    // Cria elemento do card
     const card = document.createElement('div');
     card.className = 'product-card api-product-card';
     card.dataset.category = p.category || '';
+    card.dataset.name = p.name || '';
+    card.dataset.description = p.description || '';
+    card.dataset.price = p.price || 0;
+    card.dataset.img = p.img || '';
+
     const imageUrl = p.img
       ? (p.img.startsWith('/uploads')
-      ? `${API_URL.replace('/api', '')}${p.img}?v=${Date.now()}`
-      : `${API_URL.replace('/api', '')}/uploads/${p.img}?v=${Date.now()}`)
+        ? `${API_URL.replace('/api', '')}${p.img}?v=${Date.now()}`
+        : `${API_URL.replace('/api', '')}/uploads/${p.img}?v=${Date.now()}`)
       : `${API_URL.replace('/api', '')}/uploads/default.png`;
 
     card.innerHTML = `
@@ -149,21 +152,23 @@ function renderProductsFromAPI(products) {
         <h3 class="product-title">${p.name}</h3>
         <p class="product-description">${p.description || ''}</p>
         <div class="product-price">R$ ${parseFloat(p.price).toFixed(2).replace('.', ',')}</div>
-        <button class="btn-product" onclick="solicitarProduto()">Solicitar Orçamento</button>
+        <button class="btn-product">Solicitar Orçamento</button>
       </div>
     `;
 
-    grid.appendChild(card);
-  });
-  document.querySelectorAll('.api-product-card').forEach(card => {
-    btnSolicitar = card.querySelector('.btn-product');
-    btnSolicitar.addEventListener('click', (e) => {
-      e.stopPropagation(); // Evita que o clique no botão dispare o clique no card
+    // 🔹 Evento do botão (abre o modal)
+    const btn = card.querySelector('.btn-product');
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       openProductModal(card);
+    });
+
+    grid.appendChild(card);
   });
 
   console.log(`🧩 ${products.length} produtos renderizados da API!`);
-});
+}
+
 
 
 // ================= MODAL =================
@@ -248,4 +253,4 @@ if (btnSolicitar) {
 
     window.open(whatsappURL, '_blank');
   });
-}}
+}

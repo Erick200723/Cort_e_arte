@@ -156,7 +156,8 @@ function renderProductsFromAPI(products) {
       </div>
     `;
 
-    // 🔹 Evento do botão (abre o modal)
+    // 🔹 Evento do botão e do card (abre o modal)
+    card.addEventListener('click', () => openProductModal(card));
     const btn = card.querySelector('.btn-product');
     btn.addEventListener('click', (e) => {
       e.stopPropagation();

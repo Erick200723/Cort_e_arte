@@ -182,7 +182,11 @@ function openProductModal(card) {
   const price = parseFloat(card.dataset.price || 0);
   const img = card.dataset.img || card.querySelector('img')?.src || '';
   const desc = card.dataset.description || '';
-
+ //impedir que o price passe de 10 unidades
+  const maxPrice = 10
+  if (price > maxPrice){
+    price = maxprice
+  }
   // Atualiza os elementos do modal
   const modalTitle = modalEl.querySelector('#modalProductName');
   const modalPrice = modalEl.querySelector('#unitPrice');

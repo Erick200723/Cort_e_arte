@@ -157,14 +157,13 @@ function renderProductsFromAPI(products) {
   });
   document.querySelectorAll('.api-product-card').forEach(card => {
     btnSolicitar = card.querySelector('.btn-product');
-    card.addEventListener('click', (e)=>{ const id = e.target.cataset.id;
-      openProductModal(id)
-    });
-
+    btnSolicitar.addEventListener('click', (e) => {
+      e.stopPropagation(); // Evita que o clique no botão dispare o clique no card
+      openProductModal(card);
   });
 
   console.log(`🧩 ${products.length} produtos renderizados da API!`);
-}
+});
 
 
 // ================= MODAL =================
@@ -249,4 +248,4 @@ if (btnSolicitar) {
 
     window.open(whatsappURL, '_blank');
   });
-}
+}}

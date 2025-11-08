@@ -156,7 +156,11 @@ function renderProductsFromAPI(products) {
     grid.appendChild(card);
   });
   document.querySelectorAll('.api-product-card').forEach(card => {
-    
+    btnSolicitar = card.querySelector('.btn-product');
+    card.addEventListener('click', (e)=>{ const id = e.target.cataset.id;
+      openProductModal(id)
+    });
+
   });
 
   console.log(`🧩 ${products.length} produtos renderizados da API!`);

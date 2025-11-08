@@ -140,8 +140,8 @@ function renderProductsFromAPI(products) {
 
     const imageUrl = p.img
       ? (p.img.startsWith('/uploads')
-        ? `${API_URL.replace('/api', '')}${p.img}?v=${Date.now()}`
-        : `${API_URL.replace('/api', '')}/uploads/${p.img}?v=${Date.now()}`)
+          ? `${API_URL.replace('/api', '')}${p.img}?v=${Date.now()}`
+          : `${API_URL.replace('/api', '')}/uploads/${p.img}?v=${Date.now()}`)
       : `${API_URL.replace('/api', '')}/uploads/default.png`;
 
     card.innerHTML = `
@@ -156,13 +156,20 @@ function renderProductsFromAPI(products) {
       </div>
     `;
 
-    // 🔹 Evento do botão e do card (abre o modal)
+    // 🔹 Abre o modal ao clicar em qualquer parte do card
     card.addEventListener('click', () => openProductModal(card));
+
+    // 🔹 Também abre o modal ao clicar no botão, mas evita clique duplo
     const btn = card.querySelector('.btn-product');
     btn.addEventListener('click', (e) => {
-      e.stopPropagation();
+      e.stopPropagation(); // evita o evento "vazar" pro card
       openProductModal(card);
     });
+
+    // 🔹 Melhora visual e UX
+    card.style.cursor = 'pointer';
+    card.addEventListener('mouseenter', () => card.classList.add('hover'));
+    card.addEventListener('mouseleave', () => card.classList.remove('hover'));
 
     grid.appendChild(card);
   });

@@ -163,6 +163,10 @@ function renderProductsFromAPI(products) {
       openProductModal(card);
     });
 
+     card.addEventListener('click', () => {
+      openProductModal(card);
+    });
+
     grid.appendChild(card);
   });
 

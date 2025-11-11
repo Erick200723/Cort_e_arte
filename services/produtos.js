@@ -73,62 +73,69 @@ function syncPricesWithAPI() {
   const productCards = document.querySelectorAll('.product-card');
 
   productCards.forEach(card => {
-    const titleEl = card.querySelector('.product-title');
-    const priceEl = card.querySelector('.product-price');
-    const descEl = card.querySelector('.product-description');
-    const imgEl = card.querySelector('img');
+    const cardId = card.dataset.apiId || card.dataset.id;
 
-    if (!titleEl || !priceEl) return;
-
-    const localName = titleEl.textContent.trim().toLowerCase();
-    
+    // Procura o produto correspondente pelo ID da API
     const apiProduct = allProducts.find(p => {
-      // Se o card já tiver ID, compara diretamente por ID (mais confiável)
-      if (card.dataset.apiId || card.dataset.id) {
-        const apiId = String(card.dataset.apiId || card.dataset.id).trim();
-        const productId = String(p.id || p._id || '').trim();
-        return apiId === productId;
-      }
-    
-      const apiName = (p.name || '').toLowerCase();
-      return (
-        apiName === localName ||
-        apiName.includes(localName) ||
-        localName.includes(apiName)
-      );
+      const productId = String(p.id || p._id || '').trim();
+      return productId === String(cardId || '').trim();
     });
 
+    // Caso não tenha dataset ainda, tenta associar pelo nome (fallback)
+    if (!apiProduct && !cardId) {
+      const titleEl = card.querySelector('.product-title');
+      const localName = (titleEl?.textContent || '').trim().toLowerCase();
+
+      const byName = allProducts.find(p => {
+        const apiName = (p.name || '').toLowerCase();
+        return (
+          apiName === localName ||
+          apiName.includes(localName) ||
+          localName.includes(apiName)
+        );
+      });
+
+      if (byName) card.dataset.apiId = byName.id || byName._id;
+    }
 
     if (apiProduct) {
-      const newPrice = apiProduct.price
-        ? `R$ ${parseFloat(apiProduct.price).toFixed(2).replace('.', ',')}`
-        : priceEl.textContent;
+      const priceEl = card.querySelector('.product-price');
+      const descEl = card.querySelector('.product-description');
+      const imgEl = card.querySelector('img');
 
-      priceEl.textContent = newPrice;
+      // Atualiza preço
+      if (priceEl) {
+        const newPrice = apiProduct.price
+          ? `R$ ${parseFloat(apiProduct.price).toFixed(2).replace('.', ',')}`
+          : priceEl.textContent;
+        priceEl.textContent = newPrice;
+      }
 
+      // Atualiza descrição
       if (descEl && apiProduct.description) {
         descEl.textContent = apiProduct.description;
       }
 
+      // Atualiza imagem
       if (imgEl && apiProduct.img) {
-        imgEl.src = `${API_URL.replace('/api', '')}/uploads/${apiProduct.img}`;
+        imgEl.src = `${API_URL.replace('/api', '')}/uploads/${apiProduct.img}?v=${Date.now()}`;
       }
 
-
-      // 🔗 Guardar info no dataset do card
-      card.dataset.apiId = apiProduct.id;
-      card.dataset.price = apiProduct.price;
-      card.dataset.name = apiProduct.name;
+      // Atualiza dataset
+      card.dataset.apiId = apiProduct.id || apiProduct._id;
+      card.dataset.price = apiProduct.price || 0;
+      card.dataset.name = apiProduct.name || '';
       card.dataset.description = apiProduct.description || '';
       card.dataset.img = apiProduct.img || '';
     }
 
-    // 🔥 Adiciona evento de clique para abrir o modal
+    // Evento de clique
     card.addEventListener('click', () => openProductModal(card));
   });
 
-  console.log('🔄 Sincronização concluída!');
+  console.log('🔄 Sincronização concluída por ID!');
 }
+
 
 function renderProductsFromAPI(products) {
   const grid = document.getElementById('productsGrid');

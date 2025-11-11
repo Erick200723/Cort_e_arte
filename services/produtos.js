@@ -1,4 +1,4 @@
-const API_URL = 'https://sitemcor-arte.onrender.com/api';
+const API_URL = 'https://sitemcorearte.onrender.com/api';
 // const API_URL = 'http://localhost:3000/api';
 
 // ================= VARIÁVEIS GLOBAIS =================

@@ -81,15 +81,23 @@ function syncPricesWithAPI() {
     if (!titleEl || !priceEl) return;
 
     const localName = titleEl.textContent.trim().toLowerCase();
-
+    
     const apiProduct = allProducts.find(p => {
-      const apiName = p.name.toLowerCase();
+      // Se o card já tiver ID, compara diretamente por ID (mais confiável)
+      if (card.dataset.apiId || card.dataset.id) {
+        const apiId = String(card.dataset.apiId || card.dataset.id).trim();
+        const productId = String(p.id || p._id || '').trim();
+        return apiId === productId;
+      }
+    
+      const apiName = (p.name || '').toLowerCase();
       return (
         apiName === localName ||
         apiName.includes(localName) ||
         localName.includes(apiName)
       );
     });
+
 
     if (apiProduct) {
       const newPrice = apiProduct.price

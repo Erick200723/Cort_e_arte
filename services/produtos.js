@@ -1,5 +1,5 @@
-const API_URL = 'https://sitemcor-arte.onrender.com/api';
-// const API_URL = 'http://localhost:3000/api';
+// const API_URL = 'https://sitemcor-arte.onrender.com/api';
+const API_URL = 'http://localhost:3000/api';
 
 // ================= VARIÁVEIS GLOBAIS =================
 let allProducts = []; // Produtos vindos da API
@@ -22,24 +22,42 @@ function debounce(fn, wait = 250) {
 // ================= CONEXÃO COM API =================
 async function initializeAPI() {
   try {
-    console.log('🚀 Conectando à API...');
+    console.log('🚀 Conectando à API...', `${API_URL}/products`);
 
     const response = await fetch(`${API_URL}/products`);
-    if (!response.ok) throw new Error(`Erro ${response.status}: ${response.statusText}`);
+    
+    if (!response.ok) {
+      throw new Error(`Erro ${response.status}: ${response.statusText}`);
+    }
 
     // backend às vezes retorna array ou { products: [...] }
     const json = await response.json();
     allProducts = Array.isArray(json) ? json : (json.products || []);
 
-    renderProductsFromAPI(allProducts);
-    console.log('✅ Produtos carregados:', allProducts.length, 'itens');
+    console.log('✅ Produtos carregados:', allProducts);
+    
+    if (allProducts.length === 0) {
+      console.warn('⚠️ Nenhum produto encontrado na API');
+    }
 
+    renderProductsFromAPI(allProducts);
     syncPricesWithAPI();
+    
   } catch (error) {
-    console.warn('⚠️ Erro ao buscar produtos:', error.message);
+    console.error('❌ Erro ao buscar produtos:', error.message);
+    
+    // Mostra erro para o usuário
+    const grid = document.getElementById('productsGrid');
+    if (grid) {
+      grid.innerHTML = `
+        <div class="error-message">
+          <p>❌ Erro ao carregar produtos: ${error.message}</p>
+          <button onclick="initializeAPI()" class="btn-retry">🔄 Tentar Novamente</button>
+        </div>
+      `;
+    }
   }
 }
-
 // ================= FILTRO =================
 // filtra a lista allProducts e re-renderiza
 function filterProductsByName(query) {
@@ -135,15 +153,15 @@ function renderProductsFromAPI(products) {
     const card = document.createElement('div');
     card.className = 'product-card api-product-card';
     card.dataset.category = p.category || '';
-    const imageUrl = p.img
-      ? (p.img.startsWith('/uploads')
-      ? `${API_URL.replace('/api', '')}${p.img}?v=${Date.now()}`
-      : `${API_URL.replace('/api', '')}/uploads/${p.img}?v=${Date.now()}`)
-      : `${API_URL.replace('/api', '')}/uploads/default.png`;
+    
+    // ✅ CORREÇÃO AQUI - Imagens vêm direto do Cloudinary
+    const imageUrl = p.img 
+      ? p.img // Cloudinary já retorna URL completa
+      : `${API_URL.replace('/api', '')}/uploads/default.png`; // Fallback
 
     card.innerHTML = `
       <div class="product-image">
-        <img src="${imageUrl}" alt="${p.name}">
+        <img src="${imageUrl}" alt="${p.name}" onerror="this.src='${API_URL.replace('/api', '')}/uploads/default.png'">
       </div>
       <div class="product-content">
         <h3 class="product-title">${p.name}</h3>
@@ -153,16 +171,18 @@ function renderProductsFromAPI(products) {
       </div>
     `;
 
+    // 🔗 Guardar info no dataset do card
+    card.dataset.apiId = p.id;
+    card.dataset.price = p.price;
+    card.dataset.name = p.name;
+    card.dataset.description = p.description || '';
+    card.dataset.img = p.img || '';
+
     grid.appendChild(card);
-  });
-  document.querySelectorAll('.api-product-card').forEach(card => {
-    
   });
 
   console.log(`🧩 ${products.length} produtos renderizados da API!`);
 }
-
-
 // ================= MODAL =================
 function openProductModal(card) {
   const modalEl = document.getElementById('productModal');
@@ -172,7 +192,7 @@ function openProductModal(card) {
 
   const title = card.dataset.name || 'Produto';
   const price = parseFloat(card.dataset.price || 0);
-  const img = card.dataset.img || card.querySelector('img')?.src || '';
+  const img = card.dataset.img || '';
   const desc = card.dataset.description || '';
 
   // Atualiza os elementos do modal
@@ -184,18 +204,15 @@ function openProductModal(card) {
   if (modalTitle) modalTitle.textContent = title;
   if (modalPrice) modalPrice.textContent = `R$ ${price.toFixed(2).replace('.', ',')}`;
   if (modalDesc) modalDesc.textContent = desc;
+  
+  // ✅ CORREÇÃO AQUI - Imagem direto do Cloudinary
   if (modalImg) {
-  if (img.startsWith('http')) {
-    modalImg.src = img;
-  } else if (img.startsWith('/uploads')) {
-    modalImg.src = `${API_URL.replace('/api', '')}${img}`;
-  } else if (img) {
-    modalImg.src = `${API_URL.replace('/api', '')}/uploads/${img}`;
-  } else {
-    modalImg.src = './imgs/default.png';
+    if (img) {
+      modalImg.src = img; // URL direta do Cloudinary
+    } else {
+      modalImg.src = './imgs/default.png'; // Fallback local
+    }
   }
-}
-
 
   // Salva o produto atual
   currentProduct = { title, price, img };
@@ -208,30 +225,6 @@ function openProductModal(card) {
 
   modal.show();
 }
-
-// ================= ATUALIZA TOTAL =================
-const quantityInput = document.getElementById('quantityInput');
-const paymentMethod = document.getElementById('paymentMethod');
-const totalPriceSpan = document.getElementById('totalPrice');
-
-if (quantityInput && paymentMethod) {
-  quantityInput.addEventListener('input', updateTotal);
-  paymentMethod.addEventListener('change', updateTotal);
-}
-
-function updateTotal() {
-  const quantity = parseInt(quantityInput.value) || 0;
-  const unitPrice = parseFloat(currentProduct.price) || 0;
-
-  let total = unitPrice * quantity;
-
-  const method = paymentMethod.value;
-  if (method === 'card2') total += 10 * 2;
-  if (method === 'card3') total += 10 * 3;
-
-  totalPriceSpan.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
-}
-
 // ================= WHATSAPP =================
 const btnSolicitar = document.getElementById('btnSolicitar');
 if (btnSolicitar) {

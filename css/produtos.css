@@ -587,7 +587,26 @@
         transform: translateX(-50%);
     }
 }
+/* estilo dos debug*/
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  color: #e74c3c;
+}
 
+.btn-retry {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.btn-retry:hover {
+  background: #2980b9;
+}
 
 /* Responsividade */
 @media (max-width: 991.98px) {

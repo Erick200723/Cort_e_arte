@@ -1,5 +1,5 @@
-const API_URL = 'https://sitemcor-arte.onrender.com/api';
-// const API_URL = 'http://localhost:3000/api';
+// const API_URL = 'https://sitemcor-arte.onrender.com/api';
+const API_URL = 'http://localhost:3000/api';
 
 // ================= VARIÁVEIS GLOBAIS =================
 let allProducts = []; // Produtos vindos da API
@@ -103,8 +103,11 @@ function syncPricesWithAPI() {
       }
 
       if (imgEl && apiProduct.img) {
-        imgEl.src = `${API_URL.replace('/api', '')}/uploads/${apiProduct.img}`;
+        imgEl.src = apiProduct.img.startsWith('data:image')
+          ? apiProduct.img
+          : './imgs/default.png';
       }
+
 
 
       // 🔗 Guardar info no dataset do card
@@ -138,11 +141,11 @@ function renderProductsFromAPI(products) {
     card.dataset.price = p.price || 0;
     card.dataset.img = p.img || '';
 
-    const imageUrl = p.img
-      ? (p.img.startsWith('/uploads')
-        ? `${API_URL.replace('/api', '')}${p.img}?v=${Date.now()}`
-        : `${API_URL.replace('/api', '')}/uploads/${p.img}?v=${Date.now()}`)
-      : `${API_URL.replace('/api', '')}/uploads/default.png`;
+    const imageUrl =
+      p.img && p.img.startsWith('data:image')
+      ? p.img // já é base64 vindo do banco
+      : './imgs/default.png'; // imagem padrão local
+
 
     card.innerHTML = `
       <div class="product-image">
@@ -197,16 +200,15 @@ function openProductModal(card) {
   if (modalPrice) modalPrice.textContent = `R$ ${price.toFixed(2).replace('.', ',')}`;
   if (modalDesc) modalDesc.textContent = desc;
   if (modalImg) {
-  if (img.startsWith('http')) {
-    modalImg.src = img;
-  } else if (img.startsWith('/uploads')) {
-    modalImg.src = `${API_URL.replace('/api', '')}${img}`;
-  } else if (img) {
-    modalImg.src = `${API_URL.replace('/api', '')}/uploads/${img}`;
-  } else {
-    modalImg.src = './imgs/default.png';
+  if (img && img.startsWith('data:image')) {
+      modalImg.src = img;
+    } else if (img && img.startsWith('http')) {
+      modalImg.src = img;
+    } else {
+      modalImg.src = './imgs/default.png';
+    }
   }
-}
+
 
 
   // Salva o produto atual

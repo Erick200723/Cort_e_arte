@@ -67,64 +67,7 @@ if (filterEl) {
   }, 200));
 }
 
-
-// ================= SINCRONIZAÇÃO DE PREÇOS =================
-function syncPricesWithAPI() {
-  const productCards = document.querySelectorAll('.product-card');
-
-  productCards.forEach(card => {
-    const titleEl = card.querySelector('.product-title');
-    const priceEl = card.querySelector('.product-price');
-    const descEl = card.querySelector('.product-description');
-    const imgEl = card.querySelector('img');
-
-    if (!titleEl || !priceEl) return;
-
-    const localName = titleEl.textContent.trim().toLowerCase();
-
-    const apiProduct = allProducts.find(p => {
-      const apiName = p.name.toLowerCase();
-      return (
-        apiName === localName ||
-        apiName.includes(localName) ||
-        localName.includes(apiName)
-      );
-    });
-
-    if (apiProduct) {
-      const newPrice = apiProduct.price
-        ? `R$ ${parseFloat(apiProduct.price).toFixed(2).replace('.', ',')}`
-        : priceEl.textContent;
-
-      priceEl.textContent = newPrice;
-
-      if (descEl && apiProduct.description) {
-        descEl.textContent = apiProduct.description;
-      }
-
-      if (imgEl && apiProduct.img) {
-        imgEl.src = apiProduct.img.startsWith('data:image')
-          ? apiProduct.img
-          : './imgs/default.png';
-      }
-
-
-
-      // 🔗 Guardar info no dataset do card
-      card.dataset.apiId = apiProduct.id;
-      card.dataset.price = apiProduct.price;
-      card.dataset.name = apiProduct.name;
-      card.dataset.description = apiProduct.description || '';
-      card.dataset.img = apiProduct.img || '';
-    }
-
-    // 🔥 Adiciona evento de clique para abrir o modal
-    card.addEventListener('click', () => openProductModal(card));
-  });
-
-  console.log('🔄 Sincronização concluída!');
-}
-
+// ================= RENDERIZAÇÃO DE PRODUTOS =================
 function renderProductsFromAPI(products) {
   const grid = document.getElementById('productsGrid');
   if (!grid) return;
@@ -141,13 +84,7 @@ function renderProductsFromAPI(products) {
     card.dataset.price = p.price || 0;
     card.dataset.img = p.img || '';
 
-    const imageUrl =
-  p.img
-    ? (p.img.startsWith('data:image') || p.img.startsWith('http')
-        ? p.img
-        : `data:image/jpeg;base64,${p.img}`) // fallback caso só tenha o base64 cru
-    : './imgs/default.png';
-
+    const imageUrl = p.img ? p.img : './imgs/default.png'; // usa URL do Cloudinary ou fallback
 
     card.innerHTML = `
       <div class="product-image">
@@ -168,9 +105,8 @@ function renderProductsFromAPI(products) {
       openProductModal(card);
     });
 
-     card.addEventListener('click', () => {
-      openProductModal(card);
-    });
+    // 🔹 Evento do card inteiro (abre o modal)
+    card.addEventListener('click', () => openProductModal(card));
 
     grid.appendChild(card);
   });
@@ -178,9 +114,7 @@ function renderProductsFromAPI(products) {
   console.log(`🧩 ${products.length} produtos renderizados da API!`);
 }
 
-
-
-// ================= MODAL =================
+// ================= MODAL DE PRODUTO =================
 function openProductModal(card) {
   const modalEl = document.getElementById('productModal');
   if (!modalEl) return;
@@ -189,10 +123,10 @@ function openProductModal(card) {
 
   const title = card.dataset.name || 'Produto';
   const price = parseFloat(card.dataset.price || 0);
-  const img = card.dataset.img || card.querySelector('img')?.src || '';
+  const img = card.dataset.img || './imgs/default.png';
   const desc = card.dataset.description || '';
 
-  // Atualiza os elementos do modal
+  // Atualiza elementos do modal
   const modalTitle = modalEl.querySelector('#modalProductName');
   const modalPrice = modalEl.querySelector('#unitPrice');
   const modalImg = modalEl.querySelector('#modalProductImage');
@@ -201,17 +135,7 @@ function openProductModal(card) {
   if (modalTitle) modalTitle.textContent = title;
   if (modalPrice) modalPrice.textContent = `R$ ${price.toFixed(2).replace('.', ',')}`;
   if (modalDesc) modalDesc.textContent = desc;
-  if (modalImg) {
-  if (img && img.startsWith('data:image')) {
-      modalImg.src = img;
-    } else if (img && img.startsWith('http')) {
-      modalImg.src = img;
-    } else {
-      modalImg.src = './imgs/default.png';
-    }
-  }
-
-
+  if (modalImg) modalImg.src = img;
 
   // Salva o produto atual
   currentProduct = { title, price, img };
@@ -223,6 +147,40 @@ function openProductModal(card) {
   if (totalPriceSpan) totalPriceSpan.textContent = `R$ ${price.toFixed(2).replace('.', ',')}`;
 
   modal.show();
+}
+
+// ================= SINCRONIZAÇÃO DE PREÇOS E IMAGENS =================
+function syncPricesWithAPI() {
+  const productCards = document.querySelectorAll('.product-card');
+
+  productCards.forEach(card => {
+    const titleEl = card.querySelector('.product-title');
+    const priceEl = card.querySelector('.product-price');
+    const descEl = card.querySelector('.product-description');
+    const imgEl = card.querySelector('img');
+
+    if (!titleEl || !priceEl) return;
+
+    const localName = titleEl.textContent.trim().toLowerCase();
+    const apiProduct = allProducts.find(p => p.name.toLowerCase().includes(localName));
+
+    if (apiProduct) {
+      priceEl.textContent = `R$ ${parseFloat(apiProduct.price).toFixed(2).replace('.', ',')}`;
+      if (descEl) descEl.textContent = apiProduct.description || '';
+      if (imgEl) imgEl.src = apiProduct.img || './imgs/default.png';
+
+      // Atualiza dataset
+      card.dataset.apiId = apiProduct.id;
+      card.dataset.price = apiProduct.price;
+      card.dataset.name = apiProduct.name;
+      card.dataset.description = apiProduct.description || '';
+      card.dataset.img = apiProduct.img || '';
+    }
+
+    card.addEventListener('click', () => openProductModal(card));
+  });
+
+  console.log('🔄 Sincronização concluída!');
 }
 
 // ================= ATUALIZA TOTAL =================

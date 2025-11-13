@@ -85,8 +85,89 @@ if (filterEl) {
   }, 200));
 }
 
+// ================= RENDERIZAÇÃO DE PRODUTOS =================
+function renderProductsFromAPI(products) {
+  const grid = document.getElementById('productsGrid');
+  if (!grid) return;
 
-// ================= SINCRONIZAÇÃO DE PREÇOS =================
+  // Limpa cards anteriores
+  grid.innerHTML = '';
+
+  products.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'product-card api-product-card';
+    card.dataset.category = p.category || '';
+    card.dataset.name = p.name || '';
+    card.dataset.description = p.description || '';
+    card.dataset.price = p.price || 0;
+    card.dataset.img = p.img || '';
+
+    const imageUrl = p.img ? p.img : './imgs/default.png'; // usa URL do Cloudinary ou fallback
+
+    card.innerHTML = `
+      <div class="product-image">
+        <img src="${imageUrl}" alt="${p.name}">
+      </div>
+      <div class="product-content">
+        <h3 class="product-title">${p.name}</h3>
+        <p class="product-description">${p.description || ''}</p>
+        <div class="product-price">R$ ${parseFloat(p.price).toFixed(2).replace('.', ',')}</div>
+        <button class="btn-product">Solicitar Orçamento</button>
+      </div>
+    `;
+
+    // 🔹 Evento do botão (abre o modal)
+    const btn = card.querySelector('.btn-product');
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openProductModal(card);
+    });
+
+    // 🔹 Evento do card inteiro (abre o modal)
+    card.addEventListener('click', () => openProductModal(card));
+
+    grid.appendChild(card);
+  });
+
+  console.log(`🧩 ${products.length} produtos renderizados da API!`);
+}
+
+// ================= MODAL DE PRODUTO =================
+function openProductModal(card) {
+  const modalEl = document.getElementById('productModal');
+  if (!modalEl) return;
+
+  const modal = new bootstrap.Modal(modalEl);
+
+  const title = card.dataset.name || 'Produto';
+  const price = parseFloat(card.dataset.price || 0);
+  const img = card.dataset.img || './imgs/default.png';
+  const desc = card.dataset.description || '';
+
+  // Atualiza elementos do modal
+  const modalTitle = modalEl.querySelector('#modalProductName');
+  const modalPrice = modalEl.querySelector('#unitPrice');
+  const modalImg = modalEl.querySelector('#modalProductImage');
+  const modalDesc = modalEl.querySelector('#modalProductDescription');
+
+  if (modalTitle) modalTitle.textContent = title;
+  if (modalPrice) modalPrice.textContent = `R$ ${price.toFixed(2).replace('.', ',')}`;
+  if (modalDesc) modalDesc.textContent = desc;
+  if (modalImg) modalImg.src = img;
+
+  // Salva o produto atual
+  currentProduct = { title, price, img };
+
+  // Zera quantidade e total
+  const quantityInput = document.getElementById('quantityInput');
+  const totalPriceSpan = document.getElementById('totalPrice');
+  if (quantityInput) quantityInput.value = 1;
+  if (totalPriceSpan) totalPriceSpan.textContent = `R$ ${price.toFixed(2).replace('.', ',')}`;
+
+  modal.show();
+}
+
+// ================= SINCRONIZAÇÃO DE PREÇOS E IMAGENS =================
 function syncPricesWithAPI() {
   const productCards = document.querySelectorAll('.product-card');
 
@@ -99,33 +180,14 @@ function syncPricesWithAPI() {
     if (!titleEl || !priceEl) return;
 
     const localName = titleEl.textContent.trim().toLowerCase();
-
-    const apiProduct = allProducts.find(p => {
-      const apiName = p.name.toLowerCase();
-      return (
-        apiName === localName ||
-        apiName.includes(localName) ||
-        localName.includes(apiName)
-      );
-    });
+    const apiProduct = allProducts.find(p => p.name.toLowerCase().includes(localName));
 
     if (apiProduct) {
-      const newPrice = apiProduct.price
-        ? `R$ ${parseFloat(apiProduct.price).toFixed(2).replace('.', ',')}`
-        : priceEl.textContent;
+      priceEl.textContent = `R$ ${parseFloat(apiProduct.price).toFixed(2).replace('.', ',')}`;
+      if (descEl) descEl.textContent = apiProduct.description || '';
+      if (imgEl) imgEl.src = apiProduct.img || './imgs/default.png';
 
-      priceEl.textContent = newPrice;
-
-      if (descEl && apiProduct.description) {
-        descEl.textContent = apiProduct.description;
-      }
-
-      if (imgEl && apiProduct.img) {
-        imgEl.src = `${API_URL.replace('/api', '')}/uploads/${apiProduct.img}`;
-      }
-
-
-      // 🔗 Guardar info no dataset do card
+      // Atualiza dataset
       card.dataset.apiId = apiProduct.id;
       card.dataset.price = apiProduct.price;
       card.dataset.name = apiProduct.name;
@@ -133,7 +195,6 @@ function syncPricesWithAPI() {
       card.dataset.img = apiProduct.img || '';
     }
 
-    // 🔥 Adiciona evento de clique para abrir o modal
     card.addEventListener('click', () => openProductModal(card));
   });
 

@@ -142,9 +142,11 @@ function renderProductsFromAPI(products) {
     card.dataset.img = p.img || '';
 
     const imageUrl =
-      p.img && p.img.startsWith('data:image')
-      ? p.img // já é base64 vindo do banco
-      : './imgs/default.png'; // imagem padrão local
+  p.img
+    ? (p.img.startsWith('data:image') || p.img.startsWith('http')
+        ? p.img
+        : `data:image/jpeg;base64,${p.img}`) // fallback caso só tenha o base64 cru
+    : './imgs/default.png';
 
 
     card.innerHTML = `

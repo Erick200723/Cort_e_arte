@@ -3,17 +3,9 @@
 
   <url>
     <loc>https://corarte.com/</loc>
+    <lastmod>2025-01-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-
-  <!-- Se tiver outras páginas, adicione assim: -->
-  <!--
-  <url>
-    <loc>https://corarte.com/sobre.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  -->
 
 </urlset>

@@ -47,17 +47,17 @@ async function initializeAPI() {
     console.error('❌ Erro ao buscar produtos:', error.message);
     
     // Mostra erro para o usuário
-    const grid = document.getElementById('productsGrid');
-    if (grid) {
-      grid.innerHTML = `
-        <div class="error-message">
-          <p>❌ Erro ao carregar produtos: ${error.message}</p>
-          <button onclick="initializeAPI()" class="btn-retry">🔄 Tentar Novamente</button>
-        </div>
-      `;
-    }
-  }
-}
+//     const grid = document.getElementById('productsGrid');
+//     if (grid) {
+//       grid.innerHTML = `
+//         <div class="error-message">
+//           <p>❌ Erro ao carregar produtos: ${error.message}</p>
+//           <button onclick="initializeAPI()" class="btn-retry">🔄 Tentar Novamente</button>
+//         </div>
+//       `;
+//     }
+//   }
+// }
 // ================= FILTRO =================
 // filtra a lista allProducts e re-renderiza
 function filterProductsByName(query) {
